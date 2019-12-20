@@ -10,6 +10,4 @@ setup(
     python_requires='>=3.6',
     license='MIT',
     packages=find_packages(),
-    zip_safe=False,
-    install_requires=read('requirements.txt').strip().split('\n'),
 )
