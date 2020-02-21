@@ -1,3 +1,11 @@
+import glob
+import os
+import warnings
+import numpy as np
+import scipy.stats as st
+import pandas as pd
+import numba
+
 def process_directory(directory_path):
     '''
     Process all files in data directory
@@ -68,6 +76,7 @@ def normalize_migration_areas(df):
     # Divide data by mean control area
     df['Norm Cntl Area'] = df['CntlArea'].values/cntl_mean
     df['Norm Expt Area'] = df['ExptArea'].values/cntl_mean
+    df['Expt/Cntl'] = df['Norm Expt Area']/df['Norm Cntl Area']
     
     return df
 
@@ -84,7 +93,7 @@ def create_stats_df_single_treatment(df):
     '''
     n = len(df)
     t_stat, p_value = st.ttest_ind(df['Norm Cntl Area'].values, df['Norm Expt Area'].values)
-    power = get_power(get_effsize(df_norm['Norm Cntl Area'].values, df_norm['Norm Expt Area'].values,
+    power = get_power(get_effsize(df['Norm Cntl Area'].values, df['Norm Expt Area'].values,
                                   paired=False, meantest='t-test', tails='2-tailed'), 4, 0.05)
     stats_dict = {'treatment': df['treatment'].values[:2], 
                   'N embryos': [n, n],
